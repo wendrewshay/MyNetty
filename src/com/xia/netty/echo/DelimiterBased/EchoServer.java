@@ -1,4 +1,4 @@
-package com.xia.netty.echo;
+package com.xia.netty.echo.DelimiterBased;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -17,7 +17,9 @@ import io.netty.handler.logging.LoggingHandler;
 
 /**   
  * @ClassName: EchoServer   
- * @Description: DelimiterBasedFrameDecoder服务端开发   
+ * @Description: DelimiterBasedFrameDecoder服务端开发 
+ *  使用DelimiterBasedFrameDecoder可以自动对采用分隔符做码流结束标识
+ *  的消息进行解码。如果去掉，则会出现TCP粘包问题。客户端也是如此。
  * @author: XiaWenQiang
  * @date: 2017年8月1日 下午4:50:12   
  *      
@@ -59,7 +61,7 @@ public class EchoServer {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		int port = 8080;
+		int port = 8090;
 		new EchoServer().bind(port);
 	}
 }

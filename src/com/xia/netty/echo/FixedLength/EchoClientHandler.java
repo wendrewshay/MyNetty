@@ -1,22 +1,25 @@
-package com.xia.netty.echo;
+package com.xia.netty.echo.FixedLength;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 /**   
- * @ClassName: EchoServerHandler   
+ * @ClassName: EchoClientHandler   
  * @Description: TODO(这里用一句话描述这个类的作用)   
  * @author: XiaWenQiang
- * @date: 2017年8月1日 下午4:51:39   
+ * @date: 2017年8月1日 下午5:16:05   
  *      
  */
-@Sharable
-public class EchoServerHandler extends SimpleChannelInboundHandler<Object> {
+public class EchoClientHandler extends SimpleChannelInboundHandler<Object> {
 
-	int counter = 0;
+	private int counter;
+	
+	static final String ECHO_REQ = "Hi, XWQ. Welcome to Netty.$_";
+	
+	public EchoClientHandler() {
+		
+	}
 	
 	/**   
 	 * @Title: channelRead0  
@@ -32,19 +35,21 @@ public class EchoServerHandler extends SimpleChannelInboundHandler<Object> {
 	}
 
 	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		for (int i = 0; i < 10; i++) {
+			ctx.writeAndFlush(Unpooled.copiedBuffer(ECHO_REQ.getBytes()));
+		}
+	}
+
+	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		String body = (String) msg;
-		System.out.println("This is " + ++counter + " times receive client : [" + body + "]");
-		
-		body += "$_";
-		ByteBuf echo = Unpooled.copiedBuffer(body.getBytes());
-		ctx.writeAndFlush(echo);
+		System.out.println("This is " + ++counter + " times receive server : [" + msg + "]" );
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		cause.printStackTrace();
-		ctx.close(); // 发生异常，关闭链路
+		ctx.close();
 	}
 
 }

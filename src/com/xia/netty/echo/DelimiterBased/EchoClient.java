@@ -1,4 +1,4 @@
-package com.xia.netty.echo;
+package com.xia.netty.echo.DelimiterBased;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -51,7 +51,7 @@ public class EchoClient {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		int port = 8080;
+		int port = 8090;
 		new EchoClient().connect(port, "127.0.0.1");
 
 	}
