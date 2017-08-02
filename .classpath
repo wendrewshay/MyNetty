@@ -6,6 +6,14 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/install/netty-4.1.13.Final/jar/all-in-one/netty-all-4.1.13.Final.jar"/>
+	<classpathentry kind="lib" path="E:/install/netty-4.1.13.Final/jar/all-in-one/netty-all-4.1.13.Final.jar" sourcepath="E:/install/netty-4.1.13.Final/jar/all-in-one/netty-all-4.1.13.Final-sources.jar">
+		<attributes>
+			<attribute name="source_encoding" value="UTF-8"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="F:/GitHub/MyNetty/lib/javassist-3.21.0-GA.jar"/>
+	<classpathentry kind="lib" path="F:/GitHub/MyNetty/lib/msgpack-0.6.12.jar"/>
+	<classpathentry kind="lib" path="F:/GitHub/MyNetty/lib/netty-all-4.1.13.Final-sources.jar"/>
+	<classpathentry kind="lib" path="F:/GitHub/MyNetty/lib/protobuf-java-3.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
