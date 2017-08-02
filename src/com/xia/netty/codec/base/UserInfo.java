@@ -1,8 +1,11 @@
-package com.xia.netty.other.codec;
+package com.xia.netty.codec.base;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
+import org.msgpack.annotation.Message;
+
+@Message
 public class UserInfo implements Serializable{
 
 	/**

@@ -1,4 +1,4 @@
-package com.xia.netty.other.codec;
+package com.xia.netty.codec.base;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 			The byte array serializable cost time is : 161 ms
  * 可见java的原生序列化性能差强人意。
  * 
- * #业界主流的编码框架推荐：Google的Protobuf，Facebook的Thrift#
+ * #业界主流的编解码框架推荐：Google的Protobuf，Facebook的Thrift#
  * 
  * @Package: com.xia.netty.other.serial 
  * @author: xiawq   

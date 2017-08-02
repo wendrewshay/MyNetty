@@ -1,4 +1,4 @@
-package com.xia.netty.other.codec;
+package com.xia.netty.codec.base;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
