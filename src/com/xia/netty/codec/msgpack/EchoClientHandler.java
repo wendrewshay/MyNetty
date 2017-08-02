@@ -14,6 +14,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class EchoClientHandler extends SimpleChannelInboundHandler<Object>{
 
+	static int counter = 0;
+	
 	private final int sendNumber;
 	public EchoClientHandler(int sendNumber) {
 		this.sendNumber = sendNumber;
@@ -35,7 +37,7 @@ public class EchoClientHandler extends SimpleChannelInboundHandler<Object>{
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("Client receive the msgpack message : " + msg);
+		System.out.println(++counter + " Time : " + System.currentTimeMillis() + " -Client receive the msgpack message : " + msg);
 	}
 
 	@Override
