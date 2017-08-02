@@ -66,6 +66,6 @@ public class EchoClient {
 	
 	public static void main(String[] args) throws Exception {
 		int port = 8090;
-		new EchoClient("127.0.0.1", port, 1000).run();
+		new EchoClient("127.0.0.1", port, 100).run();
 	}
 }
