@@ -87,6 +87,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 			return;
 		}
 		
+		//缓存校验
 		String ifModifiedSince = request.headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
 		if(ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
@@ -118,8 +119,11 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 		if(isKeepAlive(request)) {
 			response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
 		}
+		
+		// 1.写入文件头信息
 		ctx.write(response);
 		
+		// 2.写入文件内容
 		ChannelFuture sendFileFuture;
 		if (ctx.pipeline().get(SslHandler.class) == null) {
 			sendFileFuture = ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, fileLength),ctx.newProgressivePromise());
@@ -146,10 +150,11 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 			}
 		});
 		
-		// Write the end marker
+		// 3.写入结束标记，写入空消息体到缓冲区中，表示所有的消息已经发送完成
+		// 同时flush将缓冲区中的消息刷新到SocketChannel中发送给对方
 		ChannelFuture lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
 
-		// Decide whether to close the connection or not.
+		// 4.如果是非Keep-Alive的，则最后一包消息发送完成之后，服务端要主动关闭连接。
 		if (!isKeepAlive(request)) {
 			// Close the connection when the whole content is written out.
 			lastContentFuture.addListener(ChannelFutureListener.CLOSE);
@@ -247,6 +252,10 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 	}
 	
+	/**
+	 * 当文件时间戳和浏览器发送的一样，则响应"304 Not Modified"
+	 *
+	 */
 	private static void sendNotModified(ChannelHandlerContext ctx) {
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_MODIFIED);
 		setDateHeader(response);
@@ -255,6 +264,10 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 	}
 	
+	/**
+	 * 为HTTP响应设置日期头信息
+	 *
+	 */
 	private static void setDateHeader(FullHttpResponse response) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
 		dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
@@ -263,6 +276,10 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 		response.headers().set(HttpHeaderNames.DATE, dateFormatter.format(time.getTime()));
 	}
 	
+	/**
+	 * 为HTTP响应设置日期和缓存头信息
+	 *
+	 */
 	private static void setDateAndCacheHeaders(HttpResponse response, File fileToCache) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
 		dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
@@ -287,6 +304,10 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 	}
 	
+	/**
+	 * 为HTTP响应设置内容类型头信息
+	 *
+	 */
 	private static void setContentTypeHeader(HttpResponse response, File file) {
 		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
 		response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeTypesMap.getContentType(file.getPath()));
