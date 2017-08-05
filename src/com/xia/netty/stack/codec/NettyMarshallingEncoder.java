@@ -1,4 +1,4 @@
-package com.xia.netty.stack;
+package com.xia.netty.stack.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

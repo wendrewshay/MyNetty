@@ -1,7 +1,9 @@
-package com.xia.netty.stack;
+package com.xia.netty.stack.codec;
 
 import java.util.List;
 import java.util.Map;
+
+import com.xia.netty.stack.NettyMessage;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

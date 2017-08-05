@@ -7,7 +7,7 @@
  * @date: 2017年8月4日 下午5:53:55   
  * @version V1.0     
  */
-package com.xia.netty.stack;
+package com.xia.netty.stack.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

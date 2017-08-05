@@ -1,4 +1,4 @@
-package com.xia.netty.stack;
+package com.xia.netty.stack.codec;
 
 import org.jboss.marshalling.MarshallerFactory;
 import org.jboss.marshalling.Marshalling;
