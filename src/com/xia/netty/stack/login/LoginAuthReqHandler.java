@@ -29,7 +29,7 @@ public class LoginAuthReqHandler extends SimpleChannelInboundHandler<Object> {
 		// 如果是握手应答消息，需要判断是否认证成功
 		if(message.getHeader() != null 
 				&& message.getHeader().getType() == MessageType.LOGIN_RESP.getType()) {
-			byte loginResult = (byte) message.getBody();
+			byte loginResult = (Byte) message.getBody();
 			if(loginResult != (byte)0) {
 				// 握手失败，关闭连接
 				ctx.close();
@@ -37,6 +37,8 @@ public class LoginAuthReqHandler extends SimpleChannelInboundHandler<Object> {
 				System.out.println("Login is ok : " + message);
 				ctx.fireChannelRead(msg);
 			}
+		}else{
+			ctx.fireChannelRead(msg);
 		}
 	}
 

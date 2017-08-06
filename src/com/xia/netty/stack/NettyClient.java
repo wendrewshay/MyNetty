@@ -50,7 +50,7 @@ public class NettyClient {
 						// 加了NettyMessageDecoder用于Netty消息解码，为了防止由于单条消息过大
 						// 导致的内存溢出或者畸形码流导致解码错位引起内存分配失败，我们对
 						// 单条消息最大长度进行了上限限制
-						ch.pipeline().addLast(new NettyMessageDecoder(1024*1024, 4, 4));
+						ch.pipeline().addLast(new NettyMessageDecoder(1024*1024, 4, 4, -8, 0));
 						ch.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
 						//读超时handler
 						ch.pipeline().addLast("ReadTimeoutHandler", new ReadTimeoutHandler(50));
@@ -62,10 +62,9 @@ public class NettyClient {
 			// 发起异步连接操作
 			// 这次我们绑定了本地端口，主要用于服务端重复登录保护，另外
 			// 从产品管理角度看，一般情况下不允许系统随便使用随机端口。
-//			ChannelFuture future = b.connect(
-//					new InetSocketAddress(host, port),
-//					new InetSocketAddress(NettyConstant.LOCAL_IP, NettyConstant.LOCAL_PORT)).sync();
-			ChannelFuture future = b.connect(new InetSocketAddress(host, port)).sync();
+			ChannelFuture future = b.connect(
+					new InetSocketAddress(host, port),
+					new InetSocketAddress(NettyConstant.LOCAL_IP, NettyConstant.LOCAL_PORT)).sync();
 			future.channel().closeFuture().sync();
 		
 		} finally {
@@ -77,7 +76,7 @@ public class NettyClient {
 					try {
 						TimeUnit.SECONDS.sleep(5);
 						try {
-							connect(NettyConstant.LOCAL_PORT, NettyConstant.LOCAL_IP);
+							connect(NettyConstant.PORT, NettyConstant.REMOTE_IP);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -92,6 +91,6 @@ public class NettyClient {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		new NettyClient().connect(NettyConstant.LOCAL_PORT, NettyConstant.LOCAL_IP);
+		new NettyClient().connect(NettyConstant.PORT, NettyConstant.REMOTE_IP);
 	}
 }

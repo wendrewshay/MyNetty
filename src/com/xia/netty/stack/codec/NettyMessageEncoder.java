@@ -68,8 +68,10 @@ public class NettyMessageEncoder extends MessageToMessageEncoder<NettyMessage> {
 			marshallingEncoder.encode(ctx, msg.getBody(), sendBuf);
 		}else{
 			sendBuf.writeInt(0);
-			sendBuf.setInt(4, sendBuf.readableBytes());
 		}
+		sendBuf.setInt(4,sendBuf.readableBytes());
+        int num = sendBuf.readableBytes();
+        out.add(sendBuf);
 	}
 
 }

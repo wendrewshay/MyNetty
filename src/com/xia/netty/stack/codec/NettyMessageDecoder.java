@@ -36,6 +36,15 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
 		super(maxFrameLength, lengthFieldOffset, lengthFieldLength);
 		this.marshallingDecoder = MarshallingCodecFactory.buildMarshallingDecoder();
 	}
+	
+	public NettyMessageDecoder( int maxFrameLength,
+            int lengthFieldOffset, int lengthFieldLength,
+            int lengthAdjustment, int initialBytesToStrip) {
+		super(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, initialBytesToStrip);
+		this.marshallingDecoder = MarshallingCodecFactory.buildMarshallingDecoder();
+	}
+	
+	
 
 	@Override
 	protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
@@ -48,31 +57,31 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
 		
 		NettyMessage message = new NettyMessage();
 		Header header = new Header();
-		header.setCrcCode(in.readInt());
-		header.setLength(in.readInt());
-		header.setSessionID(in.readLong());
-		header.setType(in.readByte());
-		header.setPriority(in.readByte());
+		header.setCrcCode(frame.readInt());
+		header.setLength(frame.readInt());
+		header.setSessionID(frame.readLong());
+		header.setType(frame.readByte());
+		header.setPriority(frame.readByte());
 		
-		int size = in.readInt();
+		int size = frame.readInt();
 		if(size > 0) {
-			Map<String, Object> attach = new HashMap<String, Object>();
+			Map<String, Object> attach = new HashMap<String, Object>(size);
 			int keySize = 0;
 			byte[] keyArray = null;
 			String key = null;
 			for (int i = 0; i < size; i++) {
-				keySize = in.readInt();
+				keySize = frame.readInt();
 				keyArray = new byte[keySize];
-				in.readBytes(keyArray);
+				frame.readBytes(keyArray);
 				key = new String(keyArray, "UTF-8");
-				attach.put(key, marshallingDecoder.decode(ctx, in));
+				attach.put(key, marshallingDecoder.decode(ctx, frame));
 			}
 			keyArray = null;
 			key = null;
 			header.setAttachment(attach);
 		}
-		if(in.readableBytes() > 4) {
-			message.setBody(marshallingDecoder.decode(ctx, in));
+		if(frame.readableBytes() > 4) {
+			message.setBody(marshallingDecoder.decode(ctx, frame));
 		}
 		message.setHeader(header);
 		return message;
