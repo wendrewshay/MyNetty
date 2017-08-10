@@ -33,7 +33,7 @@ public class NettyServer {
 		
 		try {
 			b.group(bossGroup, workGroup).channel(NioServerSocketChannel.class)
-				.option(ChannelOption.SO_BACKLOG, 100)
+				.option(ChannelOption.SO_BACKLOG, 100) // backlog指定了内核为此套接口排队的最大连接个数
 				.handler(new LoggingHandler(LogLevel.INFO))
 				.childHandler(new ChannelInitializer<SocketChannel>() {
 	

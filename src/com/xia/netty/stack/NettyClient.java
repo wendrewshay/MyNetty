@@ -35,7 +35,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 public class NettyClient {
 
 	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-	EventLoopGroup group = new NioEventLoopGroup();
+	static EventLoopGroup group = new NioEventLoopGroup(1);
 	
 	public void connect(int port, String host) throws Exception {
 		// 配置客户端NIO线程组
@@ -66,7 +66,6 @@ public class NettyClient {
 					new InetSocketAddress(host, port),
 					new InetSocketAddress(NettyConstant.LOCAL_IP, NettyConstant.LOCAL_PORT)).sync();
 			future.channel().closeFuture().sync();
-		
 		} finally {
 			// 所有资源释放完成之后，清空资源，再次发起重连操作
 			executor.execute(new Runnable() {
@@ -91,6 +90,21 @@ public class NettyClient {
 	}
 	
 	public static void main(String[] args) throws Exception {
+//		模拟关闭链路观察TCP连接句柄释放情况
+//		new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				try {
+//					TimeUnit.SECONDS.sleep(10);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//				group.shutdownGracefully();
+//			}
+//		}).start();
 		new NettyClient().connect(NettyConstant.PORT, NettyConstant.REMOTE_IP);
+		
+		
 	}
 }
